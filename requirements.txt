@@ -1,0 +1,24 @@
+# Core scientific stack
+numpy>=1.24
+pandas>=2.0
+scipy>=1.11
+
+# Neuroimaging
+nilearn>=0.10
+nibabel>=5.0
+
+# Machine learning
+scikit-learn>=1.3
+
+# Parallelisation
+joblib>=1.3
+
+# Visualisation
+matplotlib>=3.7
+seaborn>=0.12
+
+# Output documents
+python-docx>=1.0
+
+# PyTorch (used in utils/activations.py — not required for main analysis)
+# torch>=2.0

@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+.Python
+pip-log.txt
+
+# Virtual environments
+fmri_env/
+venv/
+env/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Data — never commit raw MRI data
+dataset_root/
+derivatives/
+brainlm_data/
+mock_bids/
+mock_glm/
+mock_output/
+
+# Analysis outputs — large files, regenerate from code
+analysis_output/
+nilearn_data/
+*.nii
+*.nii.gz
+*.mgz
+
+# Checkpoint files — regenerate by running master_analysis.py
+ckpt_*.json
+
+# Logs
+logs/
+*.log
+*.txt
+!README.txt
+!requirements.txt
+
+# FreeSurfer license — never commit
+license.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Validation reports
+validation_report*/
