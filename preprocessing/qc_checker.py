@@ -227,7 +227,7 @@ class QualityController:
                 print(f"| {row['subject']:<20} | Status: {row['overall_qc_status']:<15} |")
             print("-" * 40)
         else:
-            print("\n✅ All subjects passed the defined QC thresholds.")
+            print("\n  All subjects passed the defined QC thresholds.")
 
     def generate_qc_report(self, output_file='qc_report_v2.html'):
         """Generate QC report with visualizations"""
@@ -292,7 +292,7 @@ class QualityController:
         output_dir.mkdir(exist_ok=True)
         fig_path = output_dir / 'qc_plots.png'
         plt.savefig(fig_path, dpi=300, bbox_inches='tight')
-        print(f"✅ QC plots saved: {fig_path}")
+        print(f" QC plots saved: {fig_path}")
         plt.close()
         
         # Generate HTML report
@@ -326,9 +326,9 @@ class QualityController:
             
             <h2>Summary Statistics</h2>
             <ul class="summary-list">
-                <li>✅ Subjects with PASS motion: {len(df[df['motion_status'] == 'PASS'])}</li>
-                <li>⚠️ Subjects needing REVIEW (Moderate Motion): {len(df[df['motion_status'] == 'MODERATE_MOTION'])}</li>
-                <li>❌ Subjects with HIGH_MOTION: {len(df[df['motion_status'] == 'HIGH_MOTION'])}</li>
+                <li> Subjects with PASS motion: {len(df[df['motion_status'] == 'PASS'])}</li>
+                <li> Subjects needing REVIEW (Moderate Motion): {len(df[df['motion_status'] == 'MODERATE_MOTION'])}</li>
+                <li> Subjects with HIGH_MOTION: {len(df[df['motion_status'] == 'HIGH_MOTION'])}</li>
                 <li>Average Max Translation: {df['max_translation_mm'].mean():.2f} mm</li>
                 <li>Average Mean FD: {df['mean_fd'].mean():.2f} mm</li>
             </ul>
@@ -374,12 +374,12 @@ class QualityController:
         with open(html_path, 'w') as f:
             f.write(html_content)
         
-        print(f"✅ QC report saved: {html_path}")
+        print(f" QC report saved: {html_path}")
         
         # Save CSV
         csv_path = output_dir / 'qc_results_v2.csv'
         df.to_csv(csv_path, index=False)
-        print(f"✅ QC results CSV: {csv_path}")
+        print(f" QC results CSV: {csv_path}")
         
         return html_path
 
@@ -400,7 +400,7 @@ def main():
     # you may need to run this script with 'sudo'.
     
     if not os.path.exists(FMRIPREP_DIR):
-        print(f"\n❌ Error: fMRIPrep derivatives directory not found at:")
+        print(f"\n Error: fMRIPrep derivatives directory not found at:")
         print(f"   {FMRIPREP_DIR}")
         print("Please check the path and ensure fMRIPrep has finished running.")
         return
