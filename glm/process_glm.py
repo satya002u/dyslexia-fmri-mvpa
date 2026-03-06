@@ -26,8 +26,8 @@ class GLMProcessor:
         self.glm_dir.mkdir(parents=True, exist_ok=True)
         
         self.participants = pd.read_csv(self.bids_root / 'participants.tsv', sep='\t')
-        print(f"✅ Loaded {len(self.participants)} participants")
-        print(f"   Groups: {self.participants['group'].value_counts().to_dict()}")
+        print(f" Loaded {len(self.participants)} participants")
+        print(f" Groups: {self.participants['group'].value_counts().to_dict()}")
         
         self.tr = self._get_tr()
         
@@ -121,16 +121,16 @@ class GLMProcessor:
             subj_dir = self.fmriprep_root / subject_id
             
             if not subj_dir.exists():
-                print(f"⏭️  Skipping {subject_id} (not preprocessed)")
+                print(f" Skipping {subject_id} (not preprocessed)")
                 continue
             
-            print(f"\n📍 {subject_id} ({row['group']})")
+            print(f"\n {subject_id} ({row['group']})")
             
             for run in ['01', '02', '03']:
                 try:
                     maps = self.run_subject_glm(subject_id, run)
                     if maps:
-                        print(f"   ✅ run-{run}: {len(maps)} contrasts")
+                        print(f" run-{run}: {len(maps)} contrasts")
                         results.append({
                             'subject': subject_id,
                             'run': run,
@@ -138,7 +138,7 @@ class GLMProcessor:
                             'status': 'success'
                         })
                 except Exception as e:
-                    print(f"   ❌ run-{run}: {e}")
+                    print(f" run-{run}: {e}")
                     results.append({
                         'subject': subject_id,
                         'run': run,
@@ -170,7 +170,7 @@ class GLMProcessor:
             if not subj_glm_dir.exists():
                 continue
             
-            print(f"   {subject_id}...", end='')
+            print(f" {subject_id}...", end='')
             
             avg_dir = subj_glm_dir / 'averaged'
             avg_dir.mkdir(exist_ok=True)
@@ -190,9 +190,9 @@ class GLMProcessor:
                     avg_file = avg_dir / f'{contrast}_zmap_avg.nii.gz'
                     avg_img.to_filename(avg_file)
             
-            print(" ✅")
+            print(" yes")
         
-        print("\n✅ Averaging complete")
+        print("\n Averaging complete")
 
 
 def main():
@@ -214,7 +214,7 @@ def main():
         print("\n⚠️  GLM already processed!")
         response = input("Reprocess? (yes/no): ").strip().lower()
         if response not in ['yes', 'y']:
-            print("✅ Using existing GLM results")
+            print(" Using existing GLM results")
             return
     
     # Process
@@ -222,7 +222,7 @@ def main():
     processor.average_runs()
     
     print("\n" + "="*70)
-    print("✅ GLM PROCESSING COMPLETE!")
+    print(" GLM PROCESSING COMPLETE!")
     print("="*70)
     print(f"\nResults saved in: {processor.glm_dir}")
     print("\n➡️  Next: Run MVPA analysis script")
