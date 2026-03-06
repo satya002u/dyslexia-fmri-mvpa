@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-RESULTS ANALYSIS SCRIPT
-========================
+
 Dyslexia fMRI: Generate all figures and tables from checkpoint JSONs.
 
 Run AFTER master_analysis_v2.py has completed all sections.
@@ -235,7 +234,7 @@ def fig1_roi_and_mvpa(mvpa, perm):
     out = FIG_DIR / 'fig1_roi_and_mvpa.pdf'
     fig.savefig(out)
     plt.close(fig)
-    print(f"    ✅ Saved: {out}")
+    print(f"    Saved: {out}")
 
 
 # =============================================================================
@@ -293,7 +292,7 @@ def fig2_voxel_importance():
         out = FIG_DIR / 'fig2_voxel_importance.pdf'
         fig.savefig(out)
         plt.close(fig)
-        print(f"    ✅ Saved: {out}")
+        print(f"     Saved: {out}")
 
     except Exception as e:
         print(f"    ⚠️  Voxel importance map failed: {e}")
@@ -410,7 +409,7 @@ def fig3_mds_rdm(rsa):
     out = FIG_DIR / 'fig3_mds_rdm.pdf'
     fig.savefig(out)
     plt.close(fig)
-    print(f"    ✅ Saved: {out}")
+    print(f"     Saved: {out}")
 
 
 # =============================================================================
@@ -486,7 +485,7 @@ def fig4_spd_position(rsa):
     out = FIG_DIR / 'fig4_spd_position.pdf'
     fig.savefig(out)
     plt.close(fig)
-    print(f"    ✅ Saved: {out}")
+    print(f" Saved: {out}")
 
 
 # =============================================================================
@@ -497,14 +496,14 @@ def fig5_transfer(transfer):
     print("  Generating Figure 5: Cross-contrast transfer...")
 
     if not transfer:
-        print("    ⚠️  No transfer data — skipping")
+        print("  No transfer data — skipping")
         return
 
     accs  = transfer.get('accuracies', {})
     perms = transfer.get('permutations', {})
 
     if not accs:
-        print("    ⚠️  Transfer accuracies empty — skipping")
+        print("  Transfer accuracies empty — skipping")
         return
 
     labels  = list(accs.keys())
@@ -547,7 +546,7 @@ def fig5_transfer(transfer):
     out = FIG_DIR / 'fig5_transfer.pdf'
     fig.savefig(out)
     plt.close(fig)
-    print(f"    ✅ Saved: {out}")
+    print(f"     Saved: {out}")
 
 
 # =============================================================================
@@ -584,7 +583,7 @@ def supp1_permutations(mvpa, perm):
         ax.axvline(null_mean, color='gray', lw=1.5,
                    ls='--', label=f'Null mean: {null_mean*100:.1f}%')
 
-        sig = "✅ p={:.4f}".format(p_val) if p['significant'] \
+        sig = " p={:.4f}".format(p_val) if p['significant'] \
               else "ns p={:.4f}".format(p_val)
         ax.set_title(f"{p['name']}\n{sig}", fontsize=10, fontweight='bold')
         ax.set_xlabel('Accuracy')
@@ -598,7 +597,7 @@ def supp1_permutations(mvpa, perm):
     out = FIG_DIR / 'supp1_permutations.pdf'
     fig.savefig(out)
     plt.close(fig)
-    print(f"    ✅ Saved: {out}")
+    print(f"     Saved: {out}")
 
 
 # =============================================================================
@@ -639,7 +638,7 @@ def supp2_sensitivity(sens):
     out = FIG_DIR / 'supp2_sensitivity.pdf'
     fig.savefig(out)
     plt.close(fig)
-    print(f"    ✅ Saved: {out}")
+    print(f"     Saved: {out}")
 
 
 # =============================================================================
@@ -758,7 +757,7 @@ def make_tables(mvpa, sens, perm, rsa, transfer):
 
         out = TAB_DIR / 'table1_demographics.docx'
         doc.save(str(out))
-        print(f"    ✅ Saved: {out}")
+        print(f"     Saved: {out}")
     except Exception as e:
         print(f"    ⚠️  Table 1 failed: {e}")
 
@@ -804,7 +803,7 @@ def make_tables(mvpa, sens, perm, rsa, transfer):
 
         out = TAB_DIR / 'table2_mvpa.docx'
         doc.save(str(out))
-        print(f"    ✅ Saved: {out}")
+        print(f"     Saved: {out}")
     except Exception as e:
         print(f"    ⚠️  Table 2 failed: {e}")
 
@@ -845,7 +844,7 @@ def make_tables(mvpa, sens, perm, rsa, transfer):
 
         out = TAB_DIR / 'table3_rsa.docx'
         doc.save(str(out))
-        print(f"    ✅ Saved: {out}")
+        print(f"     Saved: {out}")
     except Exception as e:
         print(f"    ⚠️  Table 3 failed: {e}")
 
@@ -890,11 +889,11 @@ def make_tables(mvpa, sens, perm, rsa, transfer):
 
             out = TAB_DIR / 'table4_transfer.docx'
             doc.save(str(out))
-            print(f"    ✅ Saved: {out}")
+            print(f"  Saved: {out}")
         else:
-            print("    ⚠️  Transfer data incomplete — skipping Table 4")
+            print("  Transfer data incomplete — skipping Table 4")
     except Exception as e:
-        print(f"    ⚠️  Table 4 failed: {e}")
+        print(f"  Table 4 failed: {e}")
 
     # ── Table 5: Sensitivity ───────────────────────────────────────────────
     print("  Generating Table 5: Sensitivity analysis...")
@@ -941,11 +940,11 @@ def make_tables(mvpa, sens, perm, rsa, transfer):
 
             out = TAB_DIR / 'table5_sensitivity.docx'
             doc.save(str(out))
-            print(f"    ✅ Saved: {out}")
+            print(f"     Saved: {out}")
         else:
-            print("    ⚠️  Sensitivity data not found — skipping Table 5")
+            print("  Sensitivity data not found — skipping Table 5")
     except Exception as e:
-        print(f"    ⚠️  Table 5 failed: {e}")
+        print(f"   Table 5 failed: {e}")
 
 
 # =============================================================================
@@ -969,7 +968,7 @@ def main():
     # Report what's available
     for name, data in [('mvpa', mvpa), ('perm', perm), ('rsa', rsa),
                        ('transfer', transfer), ('sensitivity', sens)]:
-        status = '✅' if data else '⚠️  MISSING'
+        status = '' if data else '⚠️  MISSING'
         print(f"    {name:<15} {status}")
 
     # Generate figures
@@ -986,7 +985,7 @@ def main():
     print("\n[3] Generating tables...")
     make_tables(mvpa, sens, perm, rsa, transfer)
 
-    # Final summary
+    
     print("\n" + "=" * 65)
     print("  COMPLETE")
     print(f"  Figures → {FIG_DIR}")
@@ -995,9 +994,9 @@ def main():
 
     print("\n  Files generated:")
     for f in sorted(FIG_DIR.glob('*.pdf')):
-        print(f"    📊 {f.name}")
+        print(f"     {f.name}")
     for f in sorted(TAB_DIR.glob('*.docx')):
-        print(f"    📋 {f.name}")
+        print(f"     {f.name}")
 
 
 if __name__ == '__main__':
