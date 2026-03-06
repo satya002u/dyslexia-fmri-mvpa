@@ -96,7 +96,7 @@ class UltraParallelRunner:
                 f.write(f"Exit code: {result.returncode}\n")
             
             if result.returncode == 0:
-                print(f"[{datetime.now().strftime('%H:%M:%S')}] ✅ sub-{subject_id} completed ({duration:.2f}h)")
+                print(f"[{datetime.now().strftime('%H:%M:%S')}] sub-{subject_id} completed ({duration:.2f}h)")
                 return {
                     'subject': subject_id,
                     'success': True,
@@ -104,7 +104,7 @@ class UltraParallelRunner:
                     'end_time': end_time.isoformat()
                 }
             else:
-                print(f"[{datetime.now().strftime('%H:%M:%S')}] ❌ sub-{subject_id} failed (exit {result.returncode})")
+                print(f"[{datetime.now().strftime('%H:%M:%S')}]  sub-{subject_id} failed (exit {result.returncode})")
                 return {
                     'subject': subject_id,
                     'success': False,
@@ -113,7 +113,7 @@ class UltraParallelRunner:
                 }
                 
         except subprocess.TimeoutExpired:
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] ⏱️  sub-{subject_id} timed out (>12h)")
+            print(f"[{datetime.now().strftime('%H:%M:%S')}]   sub-{subject_id} timed out (>12h)")
             return {
                 'subject': subject_id,
                 'success': False,
@@ -121,7 +121,7 @@ class UltraParallelRunner:
                 'error': 'Timeout after 12 hours'
             }
         except Exception as e:
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] ❌ sub-{subject_id} error: {e}")
+            print(f"[{datetime.now().strftime('%H:%M:%S')}]  sub-{subject_id} error: {e}")
             return {
                 'subject': subject_id,
                 'success': False,
@@ -175,7 +175,7 @@ class UltraParallelRunner:
         
         # Estimate completion time
         est_time = 8.0  # Average 8 hours per subject
-        print(f"\n⏱️ Estimated completion: {est_time:.1f} hours")
+        print(f"\n Estimated completion: {est_time:.1f} hours")
         print(f"    (All subjects finish together!)")
         
         print("\n" + "=" * 70)
@@ -184,7 +184,7 @@ class UltraParallelRunner:
         # in non-interactive environments. The user needs to confirm outside the script.
         print(f"NOTE: The script is configured to run {n_parallel} jobs in parallel.")
         
-        print("\n🚀 LAUNCHING ALL SUBJECTS...")
+        print("\n LAUNCHING ALL SUBJECTS...")
         print("=" * 70 + "\n")
         
         start_time = datetime.now()
@@ -199,19 +199,19 @@ class UltraParallelRunner:
         
         # Summary
         print("\n" + "=" * 70)
-        print("🎉 ULTRA-PARALLEL PREPROCESSING COMPLETE!")
+        print(" ULTRA-PARALLEL PREPROCESSING COMPLETE!")
         print("=" * 70)
         
         successful = sum(1 for r in results if r and r.get('success', False)) # Safely handle None results
         failed = len(results) - successful
         
-        print(f"\n📊 RESULTS:")
+        print(f"\n RESULTS:")
         print(f"    Total wall time: {total_duration:.2f} hours")
         print(f"    Successful: {successful}/{len(results)} ({successful/len(results)*100:.1f}%)")
         print(f"    Failed: {failed}/{len(results)}")
         
         if failed > 0:
-            print(f"\n❌ Failed subjects:")
+            print(f"\n Failed subjects:")
             for r in results:
                 if r and not r.get('success', True):
                     error_msg = r.get('error', 'Unknown error')
@@ -224,7 +224,7 @@ class UltraParallelRunner:
             min_duration = min(durations)
             max_duration = max(durations)
             
-            print(f"\n⏱️ TIMING STATISTICS:")
+            print(f"\n TIMING STATISTICS:")
             print(f"    Average: {avg_duration:.2f} hours per subject")
             print(f"    Fastest: {min_duration:.2f} hours")
             print(f"    Slowest: {max_duration:.2f} hours")
@@ -243,7 +243,7 @@ class UltraParallelRunner:
                 'subjects': [r for r in results if r] # Filter out potential None results
             }, f, indent=2)
         
-        print(f"\n💾 Results saved: {results_file}")
+        print(f"\n Results saved: {results_file}")
         
         # Save list of failed subjects for reprocessing
         if failed > 0:
@@ -253,7 +253,7 @@ class UltraParallelRunner:
                 for r in results:
                     if r and not r.get('success', True):
                         f.write(f"{r['subject']}\n")
-            print(f"💾 Failed subjects list: {failed_file}")
+            print(f" Failed subjects list: {failed_file}")
         
         print("\n" + "=" * 70)
         
@@ -280,7 +280,7 @@ def main():
     
     # Verify license
     if not os.path.exists(fs_license):
-        print(f"\n❌ License not found: {fs_license}")
+        print(f"\n License not found: {fs_license}")
         return
     
     # Get subject list
@@ -300,7 +300,7 @@ def main():
             subject_list = [line.strip() for line in f if line.strip()]
         print(f"Loaded {len(subject_list)} subjects from {subject_file}")
     else:
-        print(f"❌ File not found: {subject_file}")
+        print(f" File not found: {subject_file}")
         
         # Try to find subjects automatically
         print("\nSearching for subjects in dataset...")
@@ -321,10 +321,10 @@ def main():
 
     # --- Subject List Validation and Display ---
     if not subject_list:
-        print("\n❌ No subjects to process. Aborting.")
+        print("\n No subjects to process. Aborting.")
         return
 
-    print(f"\n📋 Subjects to process: {len(subject_list)}")
+    print(f"\n Subjects to process: {len(subject_list)}")
     if len(subject_list) > 10:
         print(f"    First 5: {subject_list[:5]}")
         print(f"    Last 5: {subject_list[-5:]}")
@@ -362,12 +362,12 @@ def main():
     if results:
         successful = sum(1 for r in results if r and r.get('success', False))
         if successful == len(subject_list):
-            print("\n🎉🎉🎉 ALL SUBJECTS COMPLETED SUCCESSFULLY! 🎉🎉🎉")
+            print("\n ALL SUBJECTS COMPLETED SUCCESSFULLY!")
         elif successful > 0:
-            print(f"\n✅ {successful}/{len(subject_list)} subjects completed")
+            print(f"\n {successful}/{len(subject_list)} subjects completed")
             print("    You can reprocess failed subjects later using the generated 'failed_subjects.txt'.")
         else:
-            print("\n❌ All subjects failed - check logs for errors")
+            print("\n All subjects failed - check logs for errors")
 
 
 if __name__ == "__main__":
