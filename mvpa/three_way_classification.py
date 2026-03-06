@@ -37,8 +37,8 @@ class ComprehensiveGroupAnalysis:
         
         self.participants = pd.read_csv(self.bids_root / 'participants.tsv', sep='\t')
         
-        print(f"✅ Loaded {len(self.participants)} participants")
-        print(f"   Groups: {self.participants['group'].value_counts().to_dict()}")
+        print(f"Loaded {len(self.participants)} participants")
+        print(f" Groups: {self.participants['group'].value_counts().to_dict()}")
     
     def load_data(self, contrast, groups):
         """Load contrast maps for specified groups"""
@@ -185,7 +185,7 @@ class ComprehensiveGroupAnalysis:
         plt.savefig(self.figures_dir / filename, dpi=300, bbox_inches='tight')
         plt.close()
         
-        print(f"   📊 Saved: {filename}")
+        print(f" Saved: {filename}")
     
     def analyze_group_combination(self, contrast, groups, n_features=1000):
         """Analyze one group combination"""
@@ -285,7 +285,7 @@ class ComprehensiveGroupAnalysis:
                 results['combination_name'] = name
                 all_results.append(results)
             except Exception as e:
-                print(f"   ❌ Error: {e}")
+                print(f"  Error: {e}")
                 import traceback
                 traceback.print_exc()
         
@@ -324,7 +324,7 @@ class ComprehensiveGroupAnalysis:
         # Best combination
         best = max(all_results, key=lambda x: x['accuracy'])
         print("\n" + "="*70)
-        print(f"🏆 BEST COMBINATION: {best['combination_name']}")
+        print(f"BEST COMBINATION: {best['combination_name']}")
         print(f"   Accuracy: {best['accuracy']*100:.1f}%")
         print("="*70)
         
@@ -354,7 +354,7 @@ class ComprehensiveGroupAnalysis:
                 results = self.run_all_group_combinations(contrast, n_features=1000)
                 all_results.extend(results)
             except Exception as e:
-                print(f"   ❌ Error with {contrast}: {e}")
+                print(f"  Error with {contrast}: {e}")
         
         # Final summary
         print("\n" + "="*70)
@@ -418,7 +418,7 @@ def main():
     #     results = analyzer.test_all_contrasts_all_combinations()
     
     print("\n" + "="*70)
-    print("✅ ANALYSIS COMPLETE!")
+    print("ANALYSIS COMPLETE!")
     print("="*70)
     print(f"\nOutputs saved in: {analyzer.group_analysis_dir}")
     print(f"Figures saved in: {analyzer.figures_dir}")
