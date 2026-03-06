@@ -28,10 +28,10 @@ class BIDSValidator:
         for file in required_files:
             file_path = self.dataset_path / file
             if file_path.exists():
-                print(f"✅ Found: {file}")
+                print(f" Found: {file}")
                 self.info.append(f"Found required file: {file}")
             else:
-                print(f"❌ Missing: {file}")
+                print(f" Missing: {file}")
                 self.errors.append(f"Missing required file: {file}")
         
         # Check for subject directories
@@ -39,10 +39,10 @@ class BIDSValidator:
                               if d.is_dir() and d.name.startswith('sub-')])
         
         if subject_dirs:
-            print(f"\n✅ Found {len(subject_dirs)} subject directories")
+            print(f"\n Found {len(subject_dirs)} subject directories")
             self.subjects = [d.name for d in subject_dirs]
         else:
-            print("\n❌ No subject directories found")
+            print("\n No subject directories found")
             self.errors.append("No subject directories found")
             return False
         
@@ -121,17 +121,17 @@ class BIDSValidator:
         participants_file = self.dataset_path / 'participants.tsv'
         
         if not participants_file.exists():
-            print("❌ participants.tsv not found")
+            print(" participants.tsv not found")
             return None
         
         try:
             df = pd.read_csv(participants_file, sep='\t')
-            print(f"✅ Loaded participants.tsv: {len(df)} rows")
+            print(f" Loaded participants.tsv: {len(df)} rows")
             print(f"\nColumns: {list(df.columns)}")
             
             # Check for group information
             if 'group' in df.columns:
-                print("\n✅ Group information found")
+                print("\n Group information found")
                 print(df['group'].value_counts())
             else:
                 print("\n⚠️  No 'group' column found")
@@ -143,7 +143,7 @@ class BIDSValidator:
             return df
             
         except Exception as e:
-            print(f"❌ Error reading participants.tsv: {e}")
+            print(f" Error reading participants.tsv: {e}")
             self.errors.append(f"Error reading participants.tsv: {e}")
             return None
     
@@ -193,7 +193,7 @@ class BIDSValidator:
                 sub_id = sub.replace('sub-', '')
                 f.write(f"{sub_id}\n")
         
-        print(f"✅ Created: {output_path}")
+        print(f" Created: {output_path}")
         print(f"   {len(complete_subjects)} subjects ready for preprocessing")
         
         return complete_subjects
@@ -210,7 +210,7 @@ class BIDSValidator:
         print(f"Warnings: {len(self.warnings)}")
         
         if self.errors:
-            print("\n❌ ERRORS:")
+            print("\n ERRORS:")
             for err in self.errors:
                 print(f"  - {err}")
         
@@ -220,9 +220,9 @@ class BIDSValidator:
                 print(f"  - {warn}")
         
         if not self.errors:
-            print("\n✅ Dataset is valid and ready for preprocessing!")
+            print("\n Dataset is valid and ready for preprocessing!")
         else:
-            print("\n❌ Please fix errors before preprocessing")
+            print("\n Please fix errors before preprocessing")
         
         print("=" * 70)
 
@@ -238,7 +238,7 @@ def main():
         dataset_path = "/workspace/aime_dyslexia/dataset_root"
     
     if not os.path.exists(dataset_path):
-        print(f"❌ Path does not exist: {dataset_path}")
+        print(f" Path does not exist: {dataset_path}")
         return
     
     # Create validator
@@ -276,7 +276,7 @@ def main():
             for warn in validator.warnings:
                 f.write(f"  - {warn}\n")
     
-    print(f"\n✅ Detailed report saved: {report_path}")
+    print(f"\n Detailed report saved: {report_path}")
 
 if __name__ == "__main__":
     main()
