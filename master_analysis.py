@@ -88,7 +88,7 @@ class ProgressBar:
         elapsed = time.time() - self.start
         sys.stdout.write(
             f"\r  {self.prefix} [{'█'*self.width}] "
-            f"{self.total}/{self.total}  ✅ done in {elapsed:.0f}s\n"
+            f"{self.total}/{self.total}   done in {elapsed:.0f}s\n"
         )
         sys.stdout.flush()
 
@@ -101,7 +101,7 @@ def save_ckpt(out_dir, name, data):
     p = _ckpt(out_dir, name)
     with open(p, 'w') as f:
         json.dump(data, f, indent=2)
-    print(f"  💾 Checkpoint saved → {p.name}")
+    print(f"   Checkpoint saved → {p.name}")
 
 def load_ckpt(out_dir, name):
     p = _ckpt(out_dir, name)
@@ -109,10 +109,10 @@ def load_ckpt(out_dir, name):
 
 def needs_run(out_dir, name):
     if FORCE_RERUN.get(name, False):
-        print(f"  🔄 FORCE_RERUN=True → rerunning {name}")
+        print(f"   FORCE_RERUN=True → rerunning {name}")
         return True
     if load_ckpt(out_dir, name) is not None:
-        print(f"  ✅ Checkpoint found → skipping {name} "
+        print(f"   Checkpoint found → skipping {name} "
               f"(set FORCE_RERUN['{name}']=True to redo)")
         return False
     return True
@@ -163,7 +163,7 @@ def get_roi_mask(reference_img):
     _roi_cache = resample_to_img(mask_img, reference_img,
                                   interpolation='nearest')
     n_vox = int(_roi_cache.get_fdata().sum())
-    print(f"✅  {n_vox} voxels ({len(idx)} regions)")
+    print(f"  {n_vox} voxels ({len(idx)} regions)")
     return _roi_cache
 
 
