@@ -1,18 +1,13 @@
 #!/usr/bin/env python3
 """
-MASTER ANALYSIS SCRIPT v2
+MASTER ANALYSIS SCRIPT 
 ==========================
 Dyslexia fMRI: MVPA + RSA + Cross-Contrast Transfer + Permutation Testing
 Dataset: MRI Lab Graz - Reading in children (DL, SpD, TD)
 
 CHECKPOINTING:
-  Each section saves results immediately after completion.
-  On rerun, completed sections are skipped automatically.
-  To force rerun a section, set FORCE_RERUN flags below.
-  Or delete: master_results/ckpt_mvpa.json  etc.
+   master_results/ckpt_mvpa.json  etc.
 
-PROGRESS:
-  Live progress bar shows every fold — never looks stuck.
 """
 
 import numpy as np
@@ -34,7 +29,7 @@ import warnings, json, time, sys, os
 warnings.filterwarnings('ignore')
 
 # =============================================================================
-# CONFIGURATION — edit paths here
+# CONFIGURATION — user can edit paths here accordingly
 # =============================================================================
 BIDS_ROOT     = "/workspace/aime_dyslexia/dataset_root"
 GLM_DIR       = "/workspace/aime_dyslexia/analysis_output/first_level_glm"
@@ -61,9 +56,6 @@ FORCE_RERUN = {
 
 
 
-# =============================================================================
-# PROGRESS BAR
-# =============================================================================
 
 class ProgressBar:
     """Live terminal progress bar — so it never looks stuck."""
@@ -101,9 +93,6 @@ class ProgressBar:
         sys.stdout.flush()
 
 
-# =============================================================================
-# CHECKPOINTING
-# =============================================================================
 
 def _ckpt(out_dir, name):
     return Path(out_dir) / f'ckpt_{name}.json'
@@ -129,9 +118,6 @@ def needs_run(out_dir, name):
     return True
 
 
-# =============================================================================
-# HELPERS
-# =============================================================================
 
 def auto_perms(n):
     # With 256-core parallelism, 5000 perms takes ~1 min — use more for publication
@@ -391,7 +377,7 @@ def run_permutations(loader, mvpa_results, out_dir):
         sig   = p_val < 0.05
         print(f"  Null mean : {null.mean()*100:.1f}%  |  "
               f"p = {p_val:.4f}  "
-              f"{'✅ Significant' if sig else '❌ Not significant'}")
+              f"{'yes Significant' if sig else ' Not significant'}")
 
         perm_results.append(dict(
             name=r['name'], groups=r['groups'],
@@ -452,7 +438,7 @@ def run_rsa(loader, out_dir):
                      for j in np.where(m2)[0]]
             group_between[f'{g1}_vs_{g2}'] = float(np.mean(dists))
 
-        print("done ✅")
+        print("done")
 
         # Print
         print("  Within-group dissimilarity (lower = more homogeneous):")
@@ -491,27 +477,7 @@ def run_rsa(loader, out_dir):
 # =============================================================================
 
 def _transfer_pair(loader, train_c, test_c, groups):
-    """
-    Cross-contrast transfer with proper LOO-CV.
-
-    Correct design (unbiased):
-      For each left-out subject i:
-        - Train SVM on remaining N-1 subjects' TRAIN-contrast maps + their labels
-        - Feature selection + scaling fitted only on training fold
-        - Test on subject i's TEST-contrast map  ← different contrast, unseen label
-        - Record prediction
-
-    This is unbiased because:
-      1. Subject i's label is never seen during training
-      2. Feature selection is inside the fold (no leakage)
-      3. Scaler is fitted only on training fold
-      4. The SAME subject is left out of both contrasts — we ask:
-         "does the classifier trained on other subjects' PH patterns
-          correctly predict THIS subject's group from their W pattern?"
-
-    Previous (biased) version trained on ALL subjects then tested on
-    the SAME subjects — inflating accuracy to 83–100%.
-    """
+   
     tr_files, tr_labels, tr_sids = loader.load(train_c, groups)
     te_files, te_labels, te_sids = loader.load(test_c,  groups)
 
@@ -638,8 +604,8 @@ def run_transfer(loader, out_dir):
             print("  ⚠️  skipped\n")
             continue
 
-        sig  = "✅" if perm['significant'] else "❌"
-        flag = "✅" if acc > 0.60 else "⚠️ "
+        sig  = "yes" if perm['significant'] else "No significant"
+        flag = "yes" if acc > 0.60 else "⚠️ "
         print(f"  {flag}  Accuracy : {acc*100:.1f}%  |  "
               f"Null : {perm['null_mean']*100:.1f}%  |  "
               f"p = {perm['p_value']:.4f}  {sig}\n")
@@ -684,7 +650,7 @@ def save_summary(out_dir, mvpa_res, perm_res, rsa_res, transfer_res):
                         if p['groups'] == r['groups']), None)
         p_str   = f"{perm['p_value']:.4f}" if perm else "N/A"
         null_s  = f"{perm['null_mean']*100:.1f}%" if perm else "N/A"
-        sig_s   = "✅" if perm and perm['significant'] else "❌"
+        sig_s   = "sig yes" if perm and perm['significant'] else "no"
         print(f"  {r['name']:<22} {r['accuracy']*100:>9.1f}%"
               f" {null_s:>8} {p_str:>10} {sig_s:>5}")
         combined.append(dict(
@@ -717,11 +683,11 @@ def save_summary(out_dir, mvpa_res, perm_res, rsa_res, transfer_res):
     accs  = transfer_res.get('accuracies', {})
     perms = transfer_res.get('permutations', {})
     for desc, acc in accs.items():
-        flag  = "✅" if acc > 0.60 else "⚠️ "
+        flag  = "sig" if acc > 0.60 else "⚠️ "
         p     = perms.get(desc, {})
         p_str = f"{p['p_value']:.4f}" if p else "N/A"
         null  = f"{p['null_mean']*100:.1f}%" if p else "N/A"
-        sig   = "✅" if p.get('significant') else "❌"
+        sig   = "sig" if p.get('significant') else "no"
         print(f"  {flag} {desc:<44} {acc*100:>5.1f}% {null:>6} {p_str:>7} {sig:>4}")
 
     # Save
@@ -739,7 +705,7 @@ def save_summary(out_dir, mvpa_res, perm_res, rsa_res, transfer_res):
          'significant': perms.get(k, {}).get('significant')}
         for k, v in accs.items()
     ]).to_csv(out / 'transfer_summary.csv', index=False)
-    print(f"\n  💾 Saved → {out}")
+    print(f"\n   Saved → {out}")
     sep()
 
 
@@ -761,7 +727,7 @@ def main():
     out_dir = Path(OUTPUT_ROOT) / 'master_results'
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"🚀 256-core CPU parallelism  |  chunk_size={PERM_CHUNK_SIZE}  "
+    print(f" 256-core CPU parallelism  |  chunk_size={PERM_CHUNK_SIZE}  "
           f"|  ~1 min per permutation set")
 
     loader = DataLoader(BIDS_ROOT, GLM_DIR)
@@ -785,7 +751,7 @@ def main():
         perm_res = load_ckpt(out_dir, 'perm')
         sep("SECTION 3: PERMUTATION — loaded from checkpoint")
         for r in perm_res:
-            sig = "✅" if r['significant'] else "❌"
+            sig = "sig" if r['significant'] else "no"
             print(f"  {r['name']:<22}  p={r['p_value']:.4f}  {sig}")
 
     # Section 4
@@ -824,14 +790,14 @@ def main():
         perms = transfer_res.get('permutations', {})
         for k, v in accs.items():
             p   = perms.get(k, {})
-            sig = "✅" if p.get('significant') else "❌"
+            sig = "yes" if p.get('significant') else "no"
             p_s = f"p={p['p_value']:.4f}" if p else ""
             print(f"  {k:<45}  {v*100:.1f}%  {p_s}  {sig}")
 
     # Section 6
     save_summary(OUTPUT_ROOT, mvpa_res, perm_res, rsa_res, transfer_res)
 
-    sep("✅  ALL SECTIONS COMPLETE", char="█")
+    sep("  ALL SECTIONS COMPLETE", char="█")
     print(f"  Results → {out_dir}\n")
 
 
