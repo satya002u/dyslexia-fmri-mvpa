@@ -38,8 +38,8 @@ class MVPAAnalyzer:
         
         self.participants = pd.read_csv(self.bids_root / 'participants.tsv', sep='\t')
         
-        print(f"✅ Loaded {len(self.participants)} participants")
-        print(f"   Groups: {self.participants['group'].value_counts().to_dict()}")
+        print(f"Loaded {len(self.participants)} participants")
+        print(f"  Groups: {self.participants['group'].value_counts().to_dict()}")
     
     def load_contrast_maps(self, contrast='Reading', groups=None):
         """Load contrast maps for specified groups"""
@@ -132,7 +132,7 @@ class MVPAAnalyzer:
     
     def extract_features_selected(self, image_files, labels, n_features=1000):
         """Extract features with feature selection"""
-        print(f"   Strategy: Feature selection (top {n_features})")
+        print(f" Strategy: Feature selection (top {n_features})")
         
         # First get whole brain features
         masker = NiftiMasker(
@@ -155,7 +155,7 @@ class MVPAAnalyzer:
         selector = SelectKBest(f_classif, k=n_features)
         X = selector.fit_transform(X_all, labels)
         
-        print(f"   Features: {X.shape[1]} selected from {X_all.shape[1]}")
+        print(f" Features: {X.shape[1]} selected from {X_all.shape[1]}")
         
         return X, (masker, selector)
     
@@ -210,7 +210,7 @@ class MVPAAnalyzer:
             json.dump(results, f, indent=2)
         
         # Print results
-        print(f"\n   ✅ Accuracy: {accuracy*100:.1f}%")
+        print(f"\n  Accuracy: {accuracy*100:.1f}%")
         print(f"\n   Classification Report:\n{report}")
         
         # Plot confusion matrix
@@ -235,7 +235,7 @@ class MVPAAnalyzer:
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
         plt.close()
         
-        print(f"   📊 Saved: {output_file.name}")
+        print(f" Saved: {output_file.name}")
     
     def run_all_approaches(self, contrast='Reading'):
         """Run all MVPA approaches"""
@@ -336,7 +336,7 @@ def main():
     
     # Check if GLM is complete
     if not Path(glm_dir).exists():
-        print("❌ GLM not found! Run Step 1 first.")
+        print("GLM not found! Run Step 1 first.")
         return
     
     print("\n" + "="*70)
@@ -371,7 +371,7 @@ def main():
     results = analyzer.run_all_approaches(contrast)
     
     print("\n" + "="*70)
-    print("✅ MVPA ANALYSIS COMPLETE!")
+    print(" MVPA ANALYSIS COMPLETE!")
     print("="*70)
     print(f"\nResults: {analyzer.mvpa_dir}")
     print(f"Figures: {analyzer.figures_dir}")
