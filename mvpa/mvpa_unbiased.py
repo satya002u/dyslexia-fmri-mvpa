@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """
 UNBIASED MVPA Analysis with Nested Cross-Validation
-Fixes data leakage by doing feature selection INSIDE the CV loop
 
-This is the CORRECT way to do MVPA for publication
 """
 
 import numpy as np
@@ -32,7 +30,7 @@ from nilearn.image import resample_to_img
 
 
 class UnbiasedMVPA:
-    """Unbiased MVPA with proper nested cross-validation"""
+    """ MVPA with proper nested cross-validation"""
     
     def __init__(self, bids_root, glm_dir, output_root):
         self.bids_root = Path(bids_root)
@@ -46,7 +44,7 @@ class UnbiasedMVPA:
             d.mkdir(parents=True, exist_ok=True)
         
         self.participants = pd.read_csv(self.bids_root / 'participants.tsv', sep='\t')
-        print(f"✅ Loaded {len(self.participants)} participants")
+        print(f"Loaded {len(self.participants)} participants")
 
     # --- NEW FUNCTION FOR ROI MASKING ---
     def create_reading_network_mask(self, reference_img):
@@ -98,7 +96,7 @@ class UnbiasedMVPA:
         # This is a critical step for consistent voxel space
         resampled_mask = resample_to_img(mask_img, reference_img, interpolation='nearest')
         
-        print(f"   ✅ Mask created with {len(region_indices)} ROIs.")
+        print(f"   Mask created with {len(region_indices)} ROIs.")
         return resampled_mask
     # -----------------------------------
     
@@ -163,9 +161,9 @@ class UnbiasedMVPA:
             print(f"   Sex difference: χ²={chi2:.2f}, p={p_sex:.4f}")
             
             if p_age < 0.05 or p_sex < 0.05:
-                print(f"\n   ⚠️  WARNING: Significant demographic differences!")
+                print(f"\n  WARNING: Significant demographic differences!")
             else:
-                print(f"\n   ✅ Groups are well-matched")
+                print(f"\n Groups are well-matched")
     
     def nested_cv_classification(self, image_files, labels, n_features=1000):
         """
@@ -380,7 +378,7 @@ class UnbiasedMVPA:
             for subj in np.array(subject_ids)[misclassified]:
                 print(f"      {subj}")
         else:
-            print("\n   ✅ No misclassifications!")
+            print("\n  No misclassifications!")
     
     def analyze_contrast(self, contrast, groups=['DL', 'TD'], n_features=1000):
         """Complete unbiased analysis for one contrast"""
@@ -444,7 +442,7 @@ class UnbiasedMVPA:
         with open(results_file, 'w') as f:
             json.dump(results, f, indent=2)
         
-        print(f"\n   💾 Results saved: {results_file.name}")
+        print(f"\n   Results saved: {results_file.name}")
         
         return results
     
@@ -466,7 +464,7 @@ class UnbiasedMVPA:
                 results = self.analyze_contrast(contrast, groups=['DL', 'TD'], n_features=1000) 
                 all_results.append(results)
             except Exception as e:
-                print(f"\n   ❌ Error in {contrast} analysis: {e}")
+                print(f"\n   Error in {contrast} analysis: {e}")
                 import traceback
                 traceback.print_exc()
         
@@ -497,7 +495,7 @@ class UnbiasedMVPA:
                 best = all_results[best_idx]
                 
                 print("\n" + "="*70)
-                print(f"🏆 BEST CONTRAST (ROI MASKED): {best['contrast']} ({best['accuracy']*100:.1f}%)")
+                print(f" BEST CONTRAST (ROI MASKED): {best['contrast']} ({best['accuracy']*100:.1f}%)")
                 print("="*70)
             except ValueError:
                 print("\n   ⚠️ Could not determine best contrast (no successful runs).")
@@ -524,7 +522,7 @@ def main():
     results = analyzer.compare_all_contrasts()
     
     print("\n" + "="*70)
-    print("✅ UNBIASED ANALYSIS (ROI MASKED) COMPLETE!")
+    print("UNBIASED ANALYSIS (ROI MASKED) COMPLETE!")
     print("="*70)
     print(f"\nOutputs: {analyzer.unbiased_dir}")
     print(f"Figures: {analyzer.figures_dir}")
